@@ -46,7 +46,7 @@ jobs:
           script: |
             github.rest.issues.create({
               owner: context.repo.owner,
-              repo: context.repo.repo
+              repo: context.repo.repo,
               title: "ZAP Scan Security Report",
               body: `ZAP Scan Result is generated.\n\n[Download report](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`
             });
