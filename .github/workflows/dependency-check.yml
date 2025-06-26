@@ -1,0 +1,9 @@
+- name: Dependency-Check Scan
+  uses: dependency-check/Dependency-Check_Action@main
+  with:
+    project: "AwesomeToDo"
+    path: "."
+    format: "HTML"
+    out: "reports"
+    args: "--enableExperimental"
+
