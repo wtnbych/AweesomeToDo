@@ -25,12 +25,15 @@ jobs:
 - type: import
   parameters:
     type: har
-    fileName: "/zap/wrk/tmp/AwesomeToDo.har"
+    fileName: /zap/wrk/tmp/AwesomeToDo.har
 - type: passiveScan-wait
   parameters: {}
 - type: activeScan
-  parameters: {}
-  policyDefinition: {}
+  parameters:
+    context: http://localhost:8000
+  policyDefinition:
+    defaultStrength: low
+    defaultThreshold: "off"
 - type: report
   parameters:
     template: modern
