@@ -1,0 +1,52 @@
+name: ZAP Security Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  security-events: write
+  issues: write
+
+jobs:
+  zap_scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start web server locally
+        run: |
+          php -S localhost:8000 -t src &
+          sleep 3
+
+      - name: ZAP Scan
+        uses: zaproxy/action-af@v0.2.0
+        with:
+          plan: 'tmp/zap_scan.yml'
+
+      - name: Save scan result as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-report
+          path: |
+            ${{ github.workspace }}/zap_report.html
+            ${{ github.workspace }}/zap_report/
+
+      - name: Post scan result to Issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+              title: "ZAP Scan Security Report",
+              body: `ZAP Scan Result is generated.\n\n[Download report](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`
+            });
